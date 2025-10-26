@@ -8,11 +8,10 @@ let w = window.innerWidth;
 let h = window.innerHeight;
 let currentIteration = new Array(total).fill().map(_ => Math.floor(Math.random() * quotes.length));
 
-// TODO: figure out why leaves are disappearing for no reason at all
 function animate (leaf){
 	gsap.to(leaf, {
 		"duration": random(6, 100),
-		"y": h + 100,
+		"y": h + 100 + Math.min(0, gsap.getProperty("#" + leaf.id, "z")) * (-10), // height of screen, PLUS a buffer zone, PLUS an adjustment for distance
 		"ease": Linear.easeNone,
 		"repeat": -1,
 		"delay": -15,
@@ -20,6 +19,8 @@ function animate (leaf){
 			currentIteration[leaf.id.split("-")[1]] = Date.now(); // update the timestamp so that the program is aware that this is a new leaf
 		},
 	});
+	
+	// rotation
 	gsap.to(leaf, {
 		"duration": random(4, 8),
 		"x": "+=" + (w / 2),
