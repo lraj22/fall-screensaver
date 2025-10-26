@@ -11,6 +11,27 @@
 		<div id="quoteBox"></div>
 		<canvas id="particleCanvas"></canvas>
 		<div id="container"></div>
+		<button id="settings">Settings</button>
+		<div id="settingsPanel" class="hidden">
+			<div id="settingsContent">
+				<h1>Settings</h1>
+				<p>Click on the screen for explosion effects. Click on leaves to see quotes. You can change the number of leaves and disable quotes if you wish.</p><br>
+				<div>
+					<input type="checkbox" name="enableQuotes" id="enableQuotes" checked>
+					<label for="enableQuotes"> Enable quotes?</label>
+				</div>
+				<br>
+				<div>
+					<label for="leavesAmount">Relative amount of leaves</label><br>
+					<input type="range" name="leavesAmount" id="leavesAmount" value="50" min="0" max="100" list="leavesAmountTickmarks">
+					<datalist id="leavesAmountTickmarks">
+						<option value="0" label="None"></option>
+						<option value="50" label="Default"></option>
+						<option value="100" label="Double"></option>
+					</datalist>
+				</div>
+			</div>
+		</div>
 		<script defer src="helper.js"></script>
 		<script defer src="main.js"></script>
 	</body>

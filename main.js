@@ -3,10 +3,12 @@
 TweenLite.set("#container", {
 	"perspective": 600,
 });
-let total = 30;
+const baseLeaves = 30;
+let leavesMultiplier = 1;
+let leavesCount = baseLeaves * leavesMultiplier;
 let w = window.innerWidth;
 let h = window.innerHeight;
-let currentIteration = new Array(total).fill().map(_ => Math.floor(Math.random() * total));
+let currentIteration = new Array(leavesCount).fill().map(_ => Math.floor(Math.random() * leavesCount));
 
 let particleCanvas = document.getElementById("particleCanvas");
 let ctx = particleCanvas.getContext("2d");
@@ -117,6 +119,9 @@ function particleAnimationLoop () {
 particleAnimationLoop();
 
 function animate (leaf){
+	// TODO: add real wind?
+	
+	// falling
 	gsap.to(leaf, {
 		"duration": random(6, 100),
 		"y": h + 100 + Math.min(0, gsap.getProperty("#" + leaf.id, "z")) * (-10), // height of screen, PLUS a buffer zone, PLUS an adjustment for distance
@@ -171,36 +176,42 @@ window.addEventListener("resize", function () {
 
 let container = document.getElementById("container");
 
-for (let i = 0; i < total; i++) {
-	let leaf = document.createElement("img");
-	leaf.src = "https://www.clipartqueen.com/image-files/red-lobed-fall-clipart-leaf.png"; // leaf png
-	leaf.alt = "leaf";
-	leaf.style.width = ((Math.random() * 30) + (Math.min(w, h) / 20)) + "px";
-	leaf.id = "leaf-" + i;
-	gsap.set(leaf, {
-		"attr": {
-			"class": "dot",
-		},
-		"x": random(-w / 2, w / 2),
-		"y": random(-150, -100),
-		"z": random(-300, 200),
-	});
-	
-	leaf.addEventListener("click", function (e) {
-		let chosenQuote = quotes[currentIteration[i] % quotes.length];
-		document.getElementById("quoteBox").textContent = chosenQuote;
-		
-		// make leaf explode in STARS
-		createExplosion(e.clientX, e.clientY, {
-			"count": 25,
-			"color": true,
-			"shape": "star",
+function recreateLeaves () {
+	console.log(leavesCount);
+	document.querySelectorAll(".dot").forEach(leaf => leaf.remove());
+	for (let i = 0; i < leavesCount; i++) {
+		let leaf = document.createElement("img");
+		leaf.src = "https://www.clipartqueen.com/image-files/red-lobed-fall-clipart-leaf.png"; // leaf png
+		leaf.alt = "leaf";
+		leaf.style.width = ((Math.random() * 30) + (Math.min(w, h) / 20)) + "px";
+		leaf.id = "leaf-" + i;
+		leaf.draggable = false;
+		gsap.set(leaf, {
+			"attr": {
+				"class": "dot",
+			},
+			"x": random(-w / 2, w / 2),
+			"y": random(-150, -100),
+			"z": random(-300, 200),
 		});
-	});
-	
-	container.appendChild(leaf);
-	animate(leaf);
+		
+		leaf.addEventListener("click", function (e) {
+			let chosenQuote = quotes[currentIteration[i] % quotes.length];
+			document.getElementById("quoteBox").textContent = chosenQuote;
+			
+			// make leaf explode in STARS
+			createExplosion(e.clientX, e.clientY, {
+				"count": 25,
+				"color": true,
+				"shape": "star",
+			});
+		});
+		
+		container.appendChild(leaf);
+		animate(leaf);
+	}
 }
+recreateLeaves();
 
 // basic explosion when clicked anywhere on canvas (aka not on a leaf)
 particleCanvas.addEventListener("click", function (e) {
@@ -209,6 +220,25 @@ particleCanvas.addEventListener("click", function (e) {
 		"count": 50,
 		"color": false,
 	});
+});
+
+document.getElementById("settings").addEventListener("click", function () {
+	document.getElementById("settingsPanel").classList.toggle("hidden");
+});
+
+document.getElementById("enableQuotes").addEventListener("click", function () {
+	document.getElementById("quoteBox").classList.toggle("hidden", !this.checked);
+});
+
+document.getElementById("leavesAmount").addEventListener("change", function () {
+	leavesMultiplier = this.value / 50;
+	leavesCount = Math.floor(baseLeaves * leavesMultiplier);
+	
+	if (currentIteration.length < leavesCount) {
+		currentIteration = new Array(leavesCount).fill().map((_, i) => currentIteration[i]);
+	}
+	
+	recreateLeaves();
 });
 
 console.log("ready!");
