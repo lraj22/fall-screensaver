@@ -8,7 +8,6 @@ body {
 }
 
 h1 {
-	color: white;
 	margin: 0;
 	padding: 1rem;
 }
@@ -17,7 +16,6 @@ img {
 	width: 100px;
 	position: absolute;
 	animation-name: fall;
-	animation-duration: 5s;
 	animation-iteration-count: infinite;
 	animation-timing-function: linear;
 }
