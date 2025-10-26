@@ -8,10 +8,11 @@ let w = window.innerWidth;
 let h = window.innerHeight;
 let currentIteration = new Array(total).fill().map(_ => Math.floor(Math.random() * quotes.length));
 
+// TODO: figure out why leaves are disappearing for no reason at all
 function animate (leaf){
 	gsap.to(leaf, {
-		"duration": random(6,15),
-		"y": h + 100 - 150,
+		"duration": random(6, 100),
+		"y": h + 100,
 		"ease": Linear.easeNone,
 		"repeat": -1,
 		"delay": -15,
@@ -20,17 +21,17 @@ function animate (leaf){
 		},
 	});
 	gsap.to(leaf, {
-		"duration": random(4,8),
-		"x": "+=100",
-		"rotationZ": random(0,180),
+		"duration": random(4, 8),
+		"x": "+=" + (w / 2),
+		"rotationZ": random(0, 180),
 		"repeat": -1,
 		"yoyo": true,
 		"ease": Sine.easeInOut,
 	});
 	gsap.to(leaf, {
-		"duration": random(2,8),
-		"rotationX": random(0,360),
-		"rotationY": random(0,360),
+		"duration": random(2, 8),
+		"rotationX": random(0, 360),
+		"rotationY": random(0, 360),
 		"repeat": -1,
 		"yoyo": true,
 		"ease": Sine.easeInOut,
@@ -50,7 +51,7 @@ for (let i = 0; i < total; i++) {
 		"attr": {
 			"class": "dot",
 		},
-		"x": random(0, w),
+		"x": random(-w / 2, w / 2),
 		"y": random(-150, -100),
 		"z": random(-300, 200),
 	});
