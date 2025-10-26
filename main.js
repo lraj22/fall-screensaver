@@ -16,7 +16,7 @@ function animate (leaf){
 		"repeat": -1,
 		"delay": -15,
 		"onRepeat": function () {
-			currentIteration[leaf.id.split("-")[1]] = Date.now();
+			currentIteration[leaf.id.split("-")[1]] = Date.now(); // update the timestamp so that the program is aware that this is a new leaf
 		},
 	});
 	gsap.to(leaf, {
@@ -38,6 +38,8 @@ function animate (leaf){
 	});
 }
 
+let container = document.getElementById("container");
+
 for (let i = 0; i < total; i++) {
 	let leaf = document.createElement("img");
 	leaf.src = "https://www.clipartqueen.com/image-files/red-lobed-fall-clipart-leaf.png"; // leaf png
@@ -50,15 +52,15 @@ for (let i = 0; i < total; i++) {
 		},
 		"x": random(0, w),
 		"y": random(-150, -100),
-		"z": random(-200, 200),
+		"z": random(-300, 200),
 	});
 	
 	leaf.onclick = function () {
-		console.log("You clicked on " + leaf.id);
-		alert(quotes[currentIteration[i] % quotes.length]);
+		let chosenQuote = quotes[currentIteration[i] % quotes.length];
+		document.getElementById("quoteBox").textContent = chosenQuote;
 	};
 	
-	document.body.appendChild(leaf);
+	container.appendChild(leaf);
 	animate(leaf);
 }
 

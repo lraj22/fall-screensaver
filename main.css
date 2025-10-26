@@ -14,7 +14,24 @@ body {
 	user-select: none;
 }
 
-h1 {
-	margin: 0;
-	padding: 1rem;
+#quoteBox {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	
+	background-color: rgba(0, 0, 0, 0.5);
+	
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	
+	box-sizing: border-box;
+	padding: 2rem;
+	
+	color: white;
+	font-family: Garamond, Georgia, "Times New Roman", Times, serif;
+	font-size: 10vmin;
+	text-align: center;
 }
