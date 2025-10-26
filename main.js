@@ -40,6 +40,24 @@ function animate (leaf){
 	});
 }
 
+window.addEventListener("resize", function () {
+	console.log("resizing & reanimating");
+	w = window.innerWidth;
+	h = window.innerHeight;
+	[...document.getElementsByClassName("dot")].forEach(leaf => {
+		leaf.style.width = ((Math.random() * 30) + (Math.min(w, h) / 20)) + "px";
+		gsap.set(leaf, {
+			"attr": {
+				"class": "dot",
+			},
+			"x": random(-w / 2, w / 2),
+			"y": random(-150, -100),
+			"z": random(-300, 200),
+		});
+		animate(leaf);
+	});
+});
+
 let container = document.getElementById("container");
 
 for (let i = 0; i < total; i++) {
