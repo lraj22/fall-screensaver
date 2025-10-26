@@ -35,3 +35,9 @@ body {
 	font-size: 10vmin;
 	text-align: center;
 }
+
+canvas {
+	position: fixed;
+	top: 0;
+	left: 0;
+}
