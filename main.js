@@ -6,16 +6,18 @@ TweenLite.set("#container", {
 let total = 30;
 let w = window.innerWidth;
 let h = window.innerHeight;
-
-function random(min,max) {return min+Math.random()*(max-min)};
+let currentIteration = new Array(total).fill().map(_ => Math.floor(Math.random() * quotes.length));
 
 function animate (leaf){
 	gsap.to(leaf, {
 		"duration": random(6,15),
-		"y": h + 100,
+		"y": h + 100 - 150,
 		"ease": Linear.easeNone,
 		"repeat": -1,
 		"delay": -15,
+		"onRepeat": function () {
+			currentIteration[leaf.id.split("-")[1]] = Date.now();
+		},
 	});
 	gsap.to(leaf, {
 		"duration": random(4,8),
@@ -53,7 +55,7 @@ for (let i = 0; i < total; i++) {
 	
 	leaf.onclick = function () {
 		console.log("You clicked on " + leaf.id);
-		alert("I love fall!");
+		alert(quotes[currentIteration[i] % quotes.length]);
 	};
 	
 	document.body.appendChild(leaf);
