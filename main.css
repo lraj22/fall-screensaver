@@ -7,6 +7,10 @@ body {
 	background-color: #222;
 	width: 100vw;
 	height: 100vh;
+	background-image: url("https://i0.wp.com/bestgrafix.com/wp-content/uploads/2025/09/Aesthetic-Fall-background.jpg?fit=960%2C540&ssl=1");
+	background-repeat: no-repeat; /* Prevents the image from repeating */
+	background-position: center center; /* Centers horizontally and vertically */
+	background-size: cover; /* Scales the image to cover the entire area */
 }
 
 h1 {
