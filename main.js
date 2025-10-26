@@ -6,7 +6,7 @@ TweenLite.set("#container", {
 let total = 30;
 let w = window.innerWidth;
 let h = window.innerHeight;
-let currentIteration = new Array(total).fill().map(_ => Math.floor(Math.random() * quotes.length));
+let currentIteration = new Array(total).fill().map(_ => Math.floor(Math.random() * total));
 
 let particleCanvas = document.getElementById("particleCanvas");
 let ctx = particleCanvas.getContext("2d");
@@ -27,7 +27,6 @@ const colors = [
 	"#333333",
 ];
 
-// TODO: make this a star and not a circle all the time
 class Particle {
 	constructor (x, y, opts) {
 		this.x = x;
@@ -38,8 +37,9 @@ class Particle {
 		this.vx = Math.cos(this.angle) * this.speed;
 		this.vy = Math.sin(this.angle) * this.speed;
 		this.opacity = 1;
+		this.shape = opts.shape;
 		if (opts.color) {
-			this.color = colors[Math.floor(Math.random() * colors.length)]; // Random color
+			this.color = ((opts.color === true) ? colors[Math.floor(Math.random() * colors.length)] : opts.color); // if true, pick any random color, otherwise the color has been specified already
 		} else {
 			this.color = "#ffffff";
 		}
@@ -48,23 +48,48 @@ class Particle {
 	update () {
 		this.x += this.vx;
 		this.y += this.vy;
-		this.opacity -= 0.01; // Fade out over time
+		this.opacity -= 0.01;
 	}
 
 	draw () {
+		if (this.shape === "none") return;
+		
 		ctx.beginPath();
-		
-		ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
 		let opacityInHex = Math.floor(Math.max(0, this.opacity) * 255).toString(16);
-		ctx.fillStyle = this.color + opacityInHex;
 		
+		if (this.shape === "star") {
+			// adapted from markE's answer; thanks! credit: https://stackoverflow.com/a/25840319/14469685
+			let cx = this.x, cy = this.y, spikes = 5, outerRadius = this.radius, innerRadius = this.radius * 2;
+			
+			let rot = Math.PI / 2 * 3;
+			let x = cx;
+			let y = cy;
+			let step = Math.PI/spikes;
+
+			ctx.moveTo(cx, cy - outerRadius);
+			for (let i = 0; i < spikes; i++) {
+				x = cx + Math.cos(rot) * outerRadius;
+				y = cy + Math.sin(rot) * outerRadius;
+				ctx.lineTo(x, y);
+				rot += step;
+
+				x = cx + Math.cos(rot) * innerRadius;
+				y = cy + Math.sin(rot) * innerRadius;
+				ctx.lineTo(x,y);
+				rot += step;
+			}
+			ctx.lineTo(cx, cy - outerRadius);
+		} else { // circle by default
+			ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+		}
+		
+		ctx.fillStyle = this.color + opacityInHex;
 		ctx.fill();
 		ctx.closePath();
 	}
 }
 
 function createExplosion (x, y, opts) {
-	// stars vs circles? maybe add to opts
 	for (let i = 0; i < opts.count; i++) {
 		particles.push(new Particle(x, y, opts));
 	}
@@ -72,7 +97,6 @@ function createExplosion (x, y, opts) {
 
 function particleAnimationLoop () {
 	ctx.clearRect(0, 0, particleCanvas.width, particleCanvas.height);
-	
 	const maxParticles = 300;
 	if (particles.length > maxParticles) {
 		particles.splice(0, particles.length - maxParticles); // clear old particles if too many
@@ -166,10 +190,11 @@ for (let i = 0; i < total; i++) {
 		let chosenQuote = quotes[currentIteration[i] % quotes.length];
 		document.getElementById("quoteBox").textContent = chosenQuote;
 		
-		// make leaf explode in STARS (still circles as of now)
+		// make leaf explode in STARS
 		createExplosion(e.clientX, e.clientY, {
-			"count": 75,
+			"count": 25,
 			"color": true,
+			"shape": "star",
 		});
 	});
 	
