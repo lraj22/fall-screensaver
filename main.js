@@ -119,7 +119,7 @@ function particleAnimationLoop () {
 particleAnimationLoop();
 
 function animate (leaf){
-	// TODO: add real wind?
+	// TODO: add real wind? see below line ("x": )
 	
 	// falling
 	gsap.to(leaf, {
@@ -136,7 +136,7 @@ function animate (leaf){
 	// rotation
 	gsap.to(leaf, {
 		"duration": random(4, 8),
-		"x": "+=" + (w / 2),
+		"x": _ => "+=" + random(-500, 500), // random drift for each leaf, not real wind but getting there
 		"rotationZ": random(0, 180),
 		"repeat": -1,
 		"yoyo": true,
@@ -163,7 +163,7 @@ window.addEventListener("resize", function () {
 			"attr": {
 				"class": "dot",
 			},
-			"x": random(-w / 2, w / 2),
+			"x": random(w / 4, 3 * w / 4),
 			"y": random(-150, -100),
 			"z": random(-300, 200), // distance from viewer (viewer is 600px away)
 		});
