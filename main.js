@@ -1,5 +1,6 @@
 // main.js - runs the main logic for fall screensaver
 
+// high utility variables
 const baseLeaves = 30;
 let leavesMultiplier = 1;
 let leavesCount = baseLeaves * leavesMultiplier;
@@ -13,87 +14,8 @@ particleCanvas.width = w;
 particleCanvas.height = h;
 
 let particles = [];
-const colors = [
-	"#ba6e58",
-	"#ff7f00",
-	"#c68139",
-	"#f7ab77",
-	"#8000ff",
-	"#aa6b6a",
-	"#a26b55",
-	"#ffb3f6",
-	"#7aa0ff",
-	"#333333",
-];
 
-class Particle {
-	constructor (x, y, opts) {
-		this.x = x;
-		this.y = y;
-		this.radius = Math.random() * 2 + 1;
-		this.speed = Math.random() * 3 + 1;
-		this.angle = Math.random() * Math.PI * 2; 
-		this.vx = Math.cos(this.angle) * this.speed;
-		this.vy = Math.sin(this.angle) * this.speed;
-		this.opacity = 1;
-		this.shape = opts.shape;
-		if (opts.color) {
-			this.color = ((opts.color === true) ? colors[Math.floor(Math.random() * colors.length)] : opts.color); // if true, pick any random color, otherwise the color has been specified already
-		} else {
-			this.color = "#ffffff";
-		}
-	}
-
-	update () {
-		this.x += this.vx;
-		this.y += this.vy;
-		this.opacity -= 0.01;
-	}
-
-	draw () {
-		if (this.shape === "none") return;
-		
-		ctx.beginPath();
-		let opacityInHex = Math.floor(Math.max(0, this.opacity) * 255).toString(16);
-		
-		if (this.shape === "star") {
-			// adapted from markE's answer; thanks! credit: https://stackoverflow.com/a/25840319/14469685
-			let cx = this.x, cy = this.y, spikes = 5, outerRadius = this.radius, innerRadius = this.radius * 2;
-			
-			let rot = Math.PI / 2 * 3;
-			let x = cx;
-			let y = cy;
-			let step = Math.PI/spikes;
-
-			ctx.moveTo(cx, cy - outerRadius);
-			for (let i = 0; i < spikes; i++) {
-				x = cx + Math.cos(rot) * outerRadius;
-				y = cy + Math.sin(rot) * outerRadius;
-				ctx.lineTo(x, y);
-				rot += step;
-
-				x = cx + Math.cos(rot) * innerRadius;
-				y = cy + Math.sin(rot) * innerRadius;
-				ctx.lineTo(x,y);
-				rot += step;
-			}
-			ctx.lineTo(cx, cy - outerRadius);
-		} else { // circle by default
-			ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-		}
-		
-		ctx.fillStyle = this.color + opacityInHex;
-		ctx.fill();
-		ctx.closePath();
-	}
-}
-
-function createExplosion (x, y, opts) {
-	for (let i = 0; i < opts.count; i++) {
-		particles.push(new Particle(x, y, opts));
-	}
-}
-
+// this is the animation loop for the particle canvas
 function particleAnimationLoop () {
 	ctx.clearRect(0, 0, particleCanvas.width, particleCanvas.height);
 	const maxParticles = 300;
@@ -143,6 +65,7 @@ function animateFall (leaf) {
 
 function animate (leaf){
 	// TODO: add real wind? see below line ("x": )
+	// maybe use 'left' property to simulate wind - manually, not with gsap
 	
 	animateFall(leaf);
 	
@@ -213,13 +136,14 @@ recreateLeaves();
 
 // basic explosion when clicked anywhere on canvas (aka not on a leaf)
 particleCanvas.addEventListener("click", function (e) {
-	// just circles
+	// just circles (no shape specified defaults to circle)
 	createExplosion(e.clientX, e.clientY, {
 		"count": 50,
 		"color": false,
 	});
 });
 
+// settings functions
 document.getElementById("settings").addEventListener("click", function () {
 	document.getElementById("settingsPanel").classList.toggle("hidden");
 });
@@ -239,4 +163,5 @@ document.getElementById("leavesAmount").addEventListener("change", function () {
 	recreateLeaves();
 });
 
+// all good to go!
 console.log("ready!");
