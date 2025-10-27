@@ -34,13 +34,17 @@ body {
 	opacity: 1;
 }
 
+.leaf {
+	position: absolute;
+}
+
 #settingsPanel {
 	position: fixed;
 	top: 0;
 	left: 0;
 	width: 100vw;
 	height: 100vh;
-	background-color: rgba(0, 0, 0, 0.5);
+	background-color: rgba(0, 0, 0, 0.8);
 	
 	display: flex;
 	justify-content: center;

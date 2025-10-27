@@ -1,8 +1,5 @@
 // main.js - runs the main logic for fall screensaver
 
-TweenLite.set("#container", {
-	"perspective": 600,
-});
 const baseLeaves = 30;
 let leavesMultiplier = 1;
 let leavesCount = baseLeaves * leavesMultiplier;
@@ -118,25 +115,41 @@ function particleAnimationLoop () {
 }
 particleAnimationLoop();
 
+function resetPos (leaf) {
+	leaf.style.width = ((Math.random() * 30) + (Math.min(w, h) / 20)) + "px";
+	gsap.set(leaf, {
+		"attr": {
+			"class": "leaf",
+		},
+		"x": random(0, w),
+		"y": random(-150, -100),
+	});
+}
+
+function animateFall (leaf) {
+	// falling
+	gsap.to(leaf, {
+		"duration": random(10, 50),
+		"y": h + 100, // height of screen, PLUS a buffer zone, PLUS an adjustment for distance
+		"ease": Linear.easeNone,
+		"onComplete": function () {
+			// reset leaf to the top somewhere
+			resetPos(leaf);
+			animateFall(leaf);
+		},
+	});
+	
+}
+
 function animate (leaf){
 	// TODO: add real wind? see below line ("x": )
 	
-	// falling
-	gsap.to(leaf, {
-		"duration": random(6, 100),
-		"y": h + 100 + Math.min(0, gsap.getProperty("#" + leaf.id, "z")) * (-10), // height of screen, PLUS a buffer zone, PLUS an adjustment for distance
-		"ease": Linear.easeNone,
-		"repeat": -1,
-		"delay": -15,
-		"onRepeat": function () {
-			currentIteration[leaf.id.split("-")[1]] = Date.now(); // update the timestamp so that the program is aware that this is a new leaf
-		},
-	});
+	animateFall(leaf);
 	
 	// rotation
 	gsap.to(leaf, {
 		"duration": random(4, 8),
-		"x": _ => "+=" + random(-500, 500), // random drift for each leaf, not real wind but getting there
+		"x": _ => "+=" + random(-w / 4, w / 4), // random drift for each leaf, not real wind but getting there
 		"rotationZ": random(0, 180),
 		"repeat": -1,
 		"yoyo": true,
@@ -157,16 +170,8 @@ window.addEventListener("resize", function () {
 	console.log("resizing & reanimating");
 	w = window.innerWidth;
 	h = window.innerHeight;
-	[...document.getElementsByClassName("dot")].forEach(leaf => {
-		leaf.style.width = ((Math.random() * 30) + (Math.min(w, h) / 20)) + "px";
-		gsap.set(leaf, {
-			"attr": {
-				"class": "dot",
-			},
-			"x": random(w / 4, 3 * w / 4),
-			"y": random(-150, -100),
-			"z": random(-300, 200), // distance from viewer (viewer is 600px away)
-		});
+	document.querySelectorAll("leaf").forEach(leaf => {
+		resetPos(leaf);
 		animate(leaf);
 	});
 	
@@ -178,24 +183,17 @@ let container = document.getElementById("container");
 
 function recreateLeaves () {
 	console.log(leavesCount);
-	document.querySelectorAll(".dot").forEach(leaf => leaf.remove());
+	document.querySelectorAll(".leaf").forEach(leaf => leaf.remove());
 	for (let i = 0; i < leavesCount; i++) {
 		let leaf = document.createElement("img");
 		leaf.src = "https://www.clipartqueen.com/image-files/red-lobed-fall-clipart-leaf.png"; // leaf png
 		leaf.alt = "leaf";
-		leaf.style.width = ((Math.random() * 30) + (Math.min(w, h) / 20)) + "px";
 		leaf.id = "leaf-" + i;
 		leaf.draggable = false;
-		gsap.set(leaf, {
-			"attr": {
-				"class": "dot",
-			},
-			"x": random(-w / 2, w / 2),
-			"y": random(-150, -100),
-			"z": random(-300, 200),
-		});
+		resetPos(leaf);
 		
 		leaf.addEventListener("click", function (e) {
+			console.log("clicked", leaf.id);
 			let chosenQuote = quotes[currentIteration[i] % quotes.length];
 			document.getElementById("quoteBox").textContent = chosenQuote;
 			
